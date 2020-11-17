@@ -72,6 +72,18 @@
 
 - (void)asyncSendPacket:(id<RHUpstreamPacket>)packet
 {
+    //回调上层处理时，切换回主线程 [发送数据，接收数据，解码数据 都是在socket线程中处理]
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSEnumerator *objectEnumerator = [self.delegateMap objectEnumerator];
+        id<RHSocketChannelDelegate> delegate = nil;
+        while (delegate = [objectEnumerator nextObject]) {
+            if ([delegate respondsToSelector:@selector(channel:send:)])
+            {
+                [delegate channel:self send:packet];
+            }
+        }
+    });
+
     [self.upstreamBuffer appendSendPacket:packet];
 }
 
@@ -98,7 +110,10 @@
         NSEnumerator *objectEnumerator = [self.delegateMap objectEnumerator];
         id<RHSocketChannelDelegate> delegate = nil;
         while (delegate = [objectEnumerator nextObject]) {
-            [delegate channelClosed:self error:err];
+            if ([delegate respondsToSelector:@selector(channelClosed:error:)])
+            {
+                [delegate channelClosed:self error:err];
+            }
         }
     });
 }
@@ -110,7 +125,10 @@
         NSEnumerator *objectEnumerator = [self.delegateMap objectEnumerator];
         id<RHSocketChannelDelegate> delegate = nil;
         while (delegate = [objectEnumerator nextObject]) {
-            [delegate channelOpened:self host:host port:port];
+            if ([delegate respondsToSelector:@selector(channelOpened:host:port:)])
+            {
+                [delegate channelOpened:self host:host port:port];
+            }
         }
     });
     
@@ -130,7 +148,10 @@
         NSEnumerator *objectEnumerator = [self.delegateMap objectEnumerator];
         id<RHSocketChannelDelegate> delegate = nil;
         while (delegate = [objectEnumerator nextObject]) {
-            [delegate channel:self received:packet];
+            if ([delegate respondsToSelector:@selector(channel:received:)])
+            {
+                [delegate channel:self received:packet];
+            }
         }
     });
 }

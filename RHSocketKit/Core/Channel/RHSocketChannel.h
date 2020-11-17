@@ -18,6 +18,7 @@
 
 - (void)channelOpened:(RHSocketChannel *)channel host:(NSString *)host port:(int)port;
 - (void)channelClosed:(RHSocketChannel *)channel error:(NSError *)error;
+- (void)channel:(RHSocketChannel *)channel send:(id<RHUpstreamPacket>)packet;
 - (void)channel:(RHSocketChannel *)channel received:(id<RHDownstreamPacket>)packet;
 
 @end

@@ -178,6 +178,8 @@ NSString * const RHSocketQueueSpecific = @"com.zrh.rhsocket.RHSocketQueueSpecifi
 - (void)socket:(GCDAsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag
 {
     RHSocketLog(@"[Log]: didReadData length: %lu, tag: %ld", (unsigned long)data.length, tag);
+    RHSocketLog(@"方法:%s thread:%@", __func__, [NSThread currentThread]);
+
     [self didRead:self withData:data tag:tag];
     [sock readDataWithTimeout:-1 tag:tag];
 }

@@ -110,6 +110,8 @@
 {
     _isRunning = NO;
     
+    [self stopService];
+    
     /**
      * 开启重连逻辑
      * 断开场景：开始重连

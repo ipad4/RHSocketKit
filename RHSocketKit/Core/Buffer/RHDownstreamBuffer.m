@@ -7,6 +7,7 @@
 //
 
 #import "RHDownstreamBuffer.h"
+#import "RHSocketMacros.h"
 
 @interface RHDownstreamBuffer ()
 
@@ -35,7 +36,7 @@
     
     @synchronized (self) {
         [_dataBuffer appendData:receiveData];
-        
+        RHSocketLog(@"方法:%s thread:%@", __func__, [NSThread currentThread]);
         NSInteger decodedLength = [_delegate dataWillDecode:_dataBuffer];
         if (decodedLength > 0) {
             NSRange remainRange = NSMakeRange(decodedLength, _dataBuffer.length - decodedLength);
